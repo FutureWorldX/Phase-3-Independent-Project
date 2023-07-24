@@ -12,7 +12,7 @@ const service: AxiosInstance = axios.create({
 
 // request interceptor
 service.interceptors.request.use(
-  (config: AxiosRequestConfig) => {
+  (config) => {
     // your code
     return config;
   },

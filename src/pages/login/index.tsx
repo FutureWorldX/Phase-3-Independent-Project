@@ -14,7 +14,7 @@ function LoginPage() {
   };
 
   const login = () => {
-    navigate('/workbench');
+    navigate('/home');
   };
 
   return (
