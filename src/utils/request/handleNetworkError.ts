@@ -1,4 +1,9 @@
 const handleNetworkError = (errResponse: any) => {
+  if (!errResponse) {
+    // if errResponse is undefined or null
+    console.error('Network error: Unable to get response from server.');
+    return;
+  }
   const { status: errStatus, data: errData } = errResponse;
   // console.log(errResponse.data, 'xxxxx');
   let errMessage = 'Unspecified error detected.';
