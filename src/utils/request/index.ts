@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import type { AxiosInstance } from 'axios';
 import { message } from 'antd';
 import handleNetworkError from './handleNetworkError';
@@ -6,16 +6,13 @@ import handleNetworkError from './handleNetworkError';
 const SUCCESS = 0;
 
 const service: AxiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: 'http://localhost:9292/',
   timeout: 60 * 1000,
 });
 
 // request interceptor
 service.interceptors.request.use(
-  (config) => {
-    // your code
-    return config;
-  },
+  (config: InternalAxiosRequestConfig) => config,
   (error: AxiosError) => {
     message.error(error.message);
     return Promise.reject(error);
@@ -25,67 +22,100 @@ service.interceptors.request.use(
 // response interceptor
 service.interceptors.response.use(
   (response: AxiosResponse) => {
-    const { code, message, data } = response.data;
+    const { code, message: responseMessage, data } = response.data;
     if (code === SUCCESS) {
       return data;
-    } else {
-      message.error(message);
-      return Promise.reject(new Error(message));
-    }
+    } 
+      const errorMessage = message.error(responseMessage);
+
+      /* eslint-disable-next-line no-console */
+      console.error(errorMessage);
+      
+      /* eslint-disable-next-line no-console */
+      console.error(responseMessage);
+
+      return Promise.reject(new Error(responseMessage));
   },
   (error: AxiosError) => {
     handleNetworkError(error.response);
+    
+    /* eslint-disable-next-line no-console */
+    console.error(error.stack);
+
     return Promise.reject(error);
   }
 );
 
-export const http = {
-  get<T = any>(
+const http = {
+  async get<T = any>(
     url: string,
     param?: object,
-    config?: AxiosRequestConfig
+    config?: InternalAxiosRequestConfig
   ): Promise<T> {
-    return service({
-      method: 'get',
-      url: url,
-      params: param,
-      ...config,
-    });
+    try {
+      const response = await service({
+        method: 'get',
+        url,
+        params: param,
+        ...config,
+      });
+
+      /* eslint-disable-next-line no-console */
+      console.log('Response:', response); // Log the response object
+      const { code, message: responseMessage, data } = response.data;
+
+      if (code === SUCCESS) {
+        return data;
+      } 
+
+      /* eslint-disable-next-line no-console */
+      console.error('Error loading data:', responseMessage.stack);
+      return Promise.reject(new Error(responseMessage));
+
+    } catch (error) {
+
+      /* eslint-disable-next-line no-console */
+      console.error('Error making GET request:', error);
+      
+      return Promise.reject(error);
+    }
   },
-  post<T = any>(
+  async post<T = any>(
     url: string,
     data?: object,
-    config?: AxiosRequestConfig
+    config?: InternalAxiosRequestConfig
   ): Promise<T> {
     return service({
       method: 'post',
-      url: url,
+      url,
       params: data,
       ...config,
     });
   },
-  put<T = any>(
+  async put<T = any>(
     url: string,
     data?: object,
-    config?: AxiosRequestConfig
+    config?: InternalAxiosRequestConfig
   ): Promise<T> {
     return service({
       method: 'put',
-      url: url,
+      url,
       params: data,
       ...config,
     });
   },
-  delete<T = any>(
+  async delete<T = any>(
     url: string,
     data?: object,
-    config?: AxiosRequestConfig
+    config?: InternalAxiosRequestConfig
   ): Promise<T> {
     return service({
       method: 'delete',
-      url: url,
+      url,
       params: data,
       ...config,
     });
   },
 };
+
+export default http;

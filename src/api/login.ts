@@ -1,4 +1,4 @@
-import { http } from '@utils/request';
+import http from '@utils/request';
 
 interface LoginParam {
   username: string;
@@ -6,7 +6,5 @@ interface LoginParam {
 }
 
 export default {
-  login: (data: LoginParam) => {
-    return http.post('/login', data);
-  },
+  login: (data: LoginParam) => http.post('/login', data),
 };
