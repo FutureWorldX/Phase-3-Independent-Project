@@ -17,11 +17,20 @@ return 	<div>
 				<NavLink to='/home'>
 					Home
 				</NavLink>
+				<NavLink to='/spaceform'>
+					Add Shelf space
+				</NavLink>
 				<NavLink to='/customers'>
 					Customers
 				</NavLink>
+				<NavLink to='/customerform'>
+					Add Customer
+				</NavLink>
 				<NavLink to='/orders'>
 					Orders
+				</NavLink>
+				<NavLink to='/orderform'>
+					Add Order
 				</NavLink>
 			</NavMenu>
 

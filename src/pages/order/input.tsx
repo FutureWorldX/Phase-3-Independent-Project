@@ -43,7 +43,7 @@ function OrderForm() {
       <br />
 
       <label htmlFor="price">Price in the Order:
-        <input type="price" name="price" value={formData.price} onChange={handleChange} required />
+        <input type="number" name="price" value={formData.price} onChange={handleChange} required />
       </label>
       <br />
 
